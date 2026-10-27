@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0B0B0B">
+<style>*,*::before,*::after{box-sizing:border-box}body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>DEREK Staff Dashboard</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800;900&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: brand bands top (strapline, stacked logo), tabbed single column below, cards in 3- and 4-up grids that stack on phones.
+   Deliberately single dark look to match the Not Today Derek website and workshop suite. */
+:root{
+  --black:#0B0B0B; --panel:#161616; --panel-2:#2A2A2A; --line:#333333;
+  --grey:#9A9A9A; --white:#FFFFFF; --orange:#FF5F1F; --fluoro:#E6FF00;
+  --good:#E6FF00; --mid:#FF9A5C; --low:#FF5F1F;
+  --display:"Archivo","Arial Black",Arial,sans-serif;
+  --body:"Barlow",Arial,Helvetica,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+body{background:var(--black);color:var(--white);font-family:var(--body);font-size:15px;line-height:1.5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--black)}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.strap{background:var(--fluoro);color:var(--black)}
+.strap .wrap{padding-block:8px;font-family:var(--display);font-weight:800;font-size:11px;letter-spacing:.14em;text-align:center;text-transform:uppercase}
+header .wrap{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;padding-block:24px 18px}
+.logo{font-family:var(--display);font-weight:900;font-size:clamp(28px,6vw,42px);line-height:.9;letter-spacing:-.02em;text-transform:uppercase}
+.logo span{color:var(--orange)}
+.who{text-align:right;color:var(--grey);font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:600}
+.who b{display:block;color:var(--white);font-family:var(--display);font-size:20px;letter-spacing:0;text-transform:none;font-weight:800}
+.sample{display:inline-block;margin-top:6px;border:1px solid var(--fluoro);color:var(--fluoro);padding:2px 8px;border-radius:2px;font-size:10px;letter-spacing:.14em}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--black);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;gap:4px;overflow-x:auto}
+nav a{flex:none;color:var(--grey);text-decoration:none;font-family:var(--display);font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;padding:14px 12px;border-bottom:3px solid transparent}
+nav a[aria-current="page"]{color:var(--white);border-bottom-color:var(--orange)}
+nav a:focus-visible,button:focus-visible{outline:2px solid var(--fluoro);outline-offset:2px}
+main .wrap{padding-block:24px 48px;display:grid;gap:20px}
+.kicker{font-family:var(--display);font-weight:800;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--orange)}
+.kicker.y{color:var(--fluoro)}
+h2{font-family:var(--display);font-weight:800;font-size:22px;margin:2px 0 0;text-wrap:balance}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:20px;min-width:0}
+/* Score hero */
+.hero{display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:center;background:var(--panel-2);border-left:6px solid var(--band,var(--fluoro))}
+.big{font-family:var(--display);font-weight:900;font-size:clamp(64px,14vw,104px);line-height:.85;font-variant-numeric:tabular-nums}
+.big small{font-size:.22em;color:var(--grey);font-weight:700;margin-left:4px}
+.pill{display:inline-block;font-family:var(--display);font-weight:800;font-size:12px;letter-spacing:.12em;text-transform:uppercase;padding:5px 10px;border-radius:2px;background:var(--band);color:var(--black)}
+.meta{display:flex;gap:18px;flex-wrap:wrap;margin-top:12px;color:var(--grey)}
+.meta b{color:var(--white);font-variant-numeric:tabular-nums}
+.up{color:var(--fluoro)!important}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;font-size:12px;color:var(--grey)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:1px;margin-right:6px;vertical-align:-1px}
+/* Win / goal / tip */
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.wgt{background:var(--panel);border-top:3px solid var(--orange);padding:18px;border-radius:0 0 4px 4px;min-width:0}
+.wgt:nth-child(2){border-top-color:var(--fluoro)}
+.wgt p{margin:8px 0 0;font-size:16px;font-weight:500}
+.wgt .why{font-size:13px;color:var(--grey);font-weight:400}
+/* Chart */
+.chart svg{width:100%;height:auto;display:block}
+.chart text{fill:var(--grey);font-family:var(--mono);font-size:11px}
+/* Four cards */
+.four{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:18px;min-width:0}
+.stat h3{margin:0;font-family:var(--display);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);font-weight:700}
+.stat .n{font-family:var(--display);font-weight:900;font-size:40px;line-height:1.1;margin-top:6px;font-variant-numeric:tabular-nums}
+.stat .n small{font-size:16px;color:var(--grey);font-weight:700}
+.stat .s{font-size:13px;color:var(--grey);margin-top:4px}
+.bar{height:8px;background:var(--panel-2);border-radius:4px;overflow:hidden;margin-top:12px}
+.bar span{display:block;height:100%;background:var(--fluoro)}
+/* CLEAR */
+.pillars{display:grid;gap:12px}
+.pil{display:grid;grid-template-columns:52px 1fr 64px;gap:14px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:14px 16px}
+.pil.focus{border-color:var(--orange)}
+.pil .L{font-family:var(--display);font-weight:900;font-size:40px;color:var(--orange);line-height:1;text-align:center}
+.pil .name{font-family:var(--display);font-weight:800;font-size:17px}
+.pil .def{font-size:13px;color:var(--grey)}
+.pil .track{height:10px;background:var(--panel-2);border-radius:5px;margin-top:8px;position:relative;overflow:hidden}
+.pil .track span{position:absolute;inset:0 auto 0 0;border-radius:5px}
+.pil .sc{font-family:var(--display);font-weight:900;font-size:26px;text-align:right;font-variant-numeric:tabular-nums}
+.pil .sc small{display:block;font-size:11px;color:var(--grey);font-weight:600;font-family:var(--body)}
+.tag{display:inline-block;margin-left:8px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--black);background:var(--orange);padding:2px 6px;border-radius:2px;vertical-align:2px;font-family:var(--display);font-weight:800}
+/* Progress table */
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:560px;font-variant-numeric:tabular-nums}
+th,td{padding:10px 8px;text-align:center;border-bottom:1px solid var(--line);font-size:14px}
+th{font-family:var(--display);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);font-weight:700}
+td:first-child,th:first-child{text-align:left}
+td.c{font-weight:600;border-radius:2px}
+/* Log */
+.log{display:grid;gap:14px}
+.entry{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--orange);border-radius:4px;padding:18px}
+.entry:nth-child(even){border-left-color:var(--fluoro)}
+.entry .top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.entry h3{margin:0;font-family:var(--display);font-weight:800;font-size:17px}
+.entry dl{display:grid;grid-template-columns:110px 1fr;gap:6px 14px;margin:12px 0 0}
+.entry dt{color:var(--grey);font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;padding-top:2px}
+.entry dd{margin:0}
+.grat{font-size:16px;font-weight:500;margin-top:10px;line-height:1.4}
+.miles{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:4px;font-size:12px;color:var(--grey)}
+.miles li{display:flex;gap:8px;align-items:center}
+.miles li::before{content:"";flex:none;width:10px;height:10px;border:1.5px solid var(--grey);border-radius:2px}
+.miles li.done{color:var(--white)}
+.miles li.done::before{background:var(--fluoro);border-color:var(--fluoro)}
+.keys{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-size:12px;color:var(--grey)}
+.keys i{display:inline-block;width:14px;height:3px;margin-right:6px;vertical-align:3px;border-radius:2px}
+footer .wrap{padding-block:20px 32px;color:var(--grey);font-size:12px;border-top:1px solid var(--line)}
+@media (max-width:820px){.four{grid-template-columns:repeat(2,1fr)}.three{grid-template-columns:1fr}}
+@media (max-width:480px){.hero{grid-template-columns:1fr}.four{grid-template-columns:1fr 1fr}.stat .n{font-size:32px}.entry dl{grid-template-columns:1fr}.pil{grid-template-columns:40px 1fr 52px}}
+@media (prefers-reduced-motion:no-preference){.bar span,.pil .track span{transition:width .6s ease}}
+</style>
+</head>
+<body>
+
+<div class="strap"><div class="wrap">No excuses. No masks. You vs You.</div></div>
+
+<header><div class="wrap">
+  <div class="logo">Not Today<br>Derek<span>.</span></div>
+  <div class="who">Staff dashboard<b id="staffName">Jordan</b>Week 8 · Updated after one-on-one<br><span class="sample">Example data</span></div>
+</div></header>
+
+<nav aria-label="Dashboard sections"><div class="wrap">
+  <a href="#overview">Overview</a>
+  <a href="#clear">CLEAR scores</a>
+  <a href="#progress">Progress</a>
+  <a href="#log">Weekly log</a>
+</div></nav>
+
+<main>
+  <section id="v-overview" data-view="overview"><div class="wrap">
+    <div class="panel hero" id="hero">
+      <div class="big"><span id="score">—</span><small>/100</small></div>
+      <div>
+        <div class="kicker y">Your score this week</div>
+        <div style="margin-top:8px"><span class="pill" id="band">—</span></div>
+        <div class="meta"><span><b id="delta" class="up">—</b> on last week</span><span>Started at <b id="start">—</b></span></div>
+        <div class="legend"><span><i style="background:var(--good)"></i>Firing 75+</span><span><i style="background:var(--mid)"></i>Mid range 50–74</span><span><i style="background:var(--low)"></i>Needs attention under 50</span></div>
+      </div>
+    </div>
+
+    <div class="three">
+      <div class="wgt"><div class="kicker">Win of the week</div><p>Hit the gym three mornings before work, first time since winter.</p><p class="why">Lifestyle went up two points off the back of it.</p></div>
+      <div class="wgt"><div class="kicker y">Goal of the week</div><p>Phone off at the door by 6:30 pm, four nights out of five.</p><p class="why">Agreed in your one-on-one. Built on your Exploration score being steady.</p></div>
+      <div class="wgt"><div class="kicker">Tip of the week</div><p>Try a ten-minute shutdown before you leave: close the loops, write tomorrow's list, then walk out.</p><p class="why">From Switch Off to Switch On. Your lowest pillar is Routine.</p></div>
+    </div>
+
+    <div class="panel chart">
+      <div class="kicker">Score each week</div>
+      <h2>Eight weeks of You vs You</h2>
+      <div id="chart" style="margin-top:14px"></div>
+    </div>
+
+    <div class="four">
+      <div class="stat"><h3>Energy this week</h3><div class="n">7<small>/10</small></div><div class="s">Up from 5 last week</div></div>
+      <div class="stat"><h3>Focus pillar</h3><div class="n" style="color:var(--orange)">R</div><div class="s">Routine: habits, goals and priorities</div></div>
+      <div class="stat"><h3>Personal goal</h3><div class="n"><span id="goalPct">—</span><small>%</small></div><div class="s">Run 10 km by March</div><div class="bar"><span id="goalBar" style="width:0%"></span></div><ol class="miles" id="miles"></ol></div>
+      <div class="stat"><h3>Gratitude</h3><div class="grat">“Took my daughter to Saturday netball and actually watched the whole game.”</div><div class="s">One good thing outside work</div></div>
+    </div>
+  </div></section>
+
+  <section id="v-clear" data-view="clear" hidden><div class="wrap">
+    <div><div class="kicker">The DEREK. Framework</div><h2>Your five CLEAR scores</h2><p style="color:var(--grey);margin:6px 0 0">Scored out of 10 after each one-on-one. Your lowest pillar becomes your focus and sets your tip of the week.</p></div>
+    <div class="pillars" id="pillars"></div>
+    <div class="panel chart"><div class="kicker">Tracker</div><h2>Each pillar, week by week</h2><div class="keys" id="pkeys"></div><div id="pchart" style="margin-top:12px"></div></div>
+  </div></section>
+
+  <section id="v-progress" data-view="progress" hidden><div class="wrap">
+    <div><div class="kicker">Progress</div><h2>How far you've come</h2><p style="color:var(--grey);margin:6px 0 0">Your overall score since you started, then the detail for every pillar.</p></div>
+    <div class="panel chart"><div class="kicker">Tracker</div><h2>Overall score, week by week</h2><div id="schart" style="margin-top:12px"></div></div>
+    <div class="panel tbl"><div class="kicker">History</div><h2 style="margin-bottom:10px">Every pillar, every week</h2><p style="color:var(--grey);margin:0 0 8px;font-size:13px">Brighter means stronger.</p><table id="ptable"></table></div>
+  </div></section>
+
+  <section id="v-log" data-view="log" hidden><div class="wrap">
+    <div><div class="kicker">Weekly log</div><h2>What we talked about</h2><p style="color:var(--grey);margin:6px 0 0">A short record of each one-on-one. Only what you'd be happy to read back.</p></div>
+    <div class="log" id="log"></div>
+  </div></section>
+</main>
+
+<footer><div class="wrap">© 2026 Not Today Derek · The DEREK. Framework · Your scores feed an anonymous team view. Leaders never see individual names.</div></footer>
+
+<script>
+const PILLARS=[
+  {k:"C",name:"Connection",def:"Relationships, communication and real presence."},
+  {k:"L",name:"Lifestyle",def:"Health, movement, sleep and recovery."},
+  {k:"E",name:"Exploration",def:"Growth, challenge and stepping outside the comfort zone."},
+  {k:"A",name:"Attitude",def:"Mindset, resilience, purpose and belief."},
+  {k:"R",name:"Routine",def:"Habits, goals and priorities."}
+];
+// Example data: CLEAR scores per week (out of 10)
+const WEEKS=[
+  [6,5,6,7,5],[6,5,6,6,5],[7,6,6,7,5],[6,6,7,7,6],
+  [7,6,7,7,5],[7,7,7,8,6],[7,6,7,8,6],[8,8,7,8,6]
+];
+const LOG=[
+  {w:8,date:"Tue 27 Oct",win:"Three gym sessions before work.",talk:"Energy is back up. Evenings still blurring into work emails.",next:"Phone off at the door by 6:30 pm."},
+  {w:7,date:"Tue 20 Oct",win:"Owned a missed follow-up in the team meeting.",talk:"Fail Forward workshop landed. Feeling flat midweek.",next:"Two early nights before Thursday."},
+  {w:6,date:"Tue 13 Oct",win:"Called an old mate for the five-minute check-in.",talk:"Connection feels stronger. Routine slipping on weekends.",next:"Plan Sunday night for the week ahead."}
+];
+const score=w=>w.reduce((a,b)=>a+b,0)*2;
+const bandOf=s=>s>=75?["Firing","var(--good)"]:s>=50?["Mid range","var(--mid)"]:["Needs attention","var(--low)"];
+const scores=WEEKS.map(score), now=scores.at(-1), prev=scores.at(-2);
+const [bName,bCol]=bandOf(now);
+document.getElementById("score").textContent=now;
+document.getElementById("band").textContent=bName;
+document.getElementById("hero").style.setProperty("--band",bCol);
+document.getElementById("band").style.setProperty("--band",bCol);
+const d=now-prev; const del=document.getElementById("delta");
+del.textContent=(d>0?"+":"")+d; if(d<0) del.classList.remove("up");
+document.getElementById("start").textContent=scores[0];
+
+// Chart: bars per week with band colours, line through tops
+(function(){
+  const W=720,H=240,p={l:36,r:12,t:16,b:32},iw=W-p.l-p.r,ih=H-p.t-p.b;
+  const y=v=>p.t+ih-(v/100)*ih, bw=iw/scores.length;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Weekly score, from ${scores[0]} in week 1 to ${now} in week ${scores.length}">`;
+  [0,25,50,75,100].forEach(v=>{s+=`<line x1="${p.l}" x2="${W-p.r}" y1="${y(v)}" y2="${y(v)}" stroke="#2A2A2A" stroke-width="1"/><text x="${p.l-8}" y="${y(v)+4}" text-anchor="end">${v}</text>`});
+  s+=`<line x1="${p.l}" x2="${W-p.r}" y1="${y(75)}" y2="${y(75)}" stroke="#E6FF00" stroke-dasharray="4 4" stroke-width="1" opacity=".6"/>`;
+  scores.forEach((v,i)=>{const x=p.l+i*bw+bw*.2,last=i===scores.length-1;
+    s+=`<rect x="${x}" y="${y(v)}" width="${bw*.6}" height="${y(0)-y(v)}" rx="2" fill="${last?'#FF5F1F':'#2A2A2A'}"/>`;
+    s+=`<text x="${x+bw*.3}" y="${y(v)-6}" text-anchor="middle" style="fill:${last?'#FFFFFF':'#9A9A9A'}">${v}</text>`;
+    s+=`<text x="${x+bw*.3}" y="${H-10}" text-anchor="middle">Wk ${i+1}</text>`});
+  s+=`</svg>`; document.getElementById("chart").innerHTML=s;
+})();
+
+// CLEAR pillars
+(function(){
+  const cur=WEEKS.at(-1), last=WEEKS.at(-2), min=Math.min(...cur);
+  document.getElementById("pillars").innerHTML=PILLARS.map((p,i)=>{
+    const v=cur[i], dv=v-last[i], focus=v===min&&cur.indexOf(min)===i;
+    const col=v>=7.5?"var(--good)":v>=5?"var(--mid)":"var(--low)";
+    return `<div class="pil${focus?' focus':''}"><div class="L">${p.k}</div>
+      <div style="min-width:0"><div class="name">${p.name}${focus?'<span class="tag">Focus</span>':''}</div><div class="def">${p.def}</div>
+      <div class="track"><span style="width:${v*10}%;background:${col}"></span></div></div>
+      <div class="sc">${v}<small>${dv>0?'+'+dv:dv===0?'no change':dv} on last wk</small></div></div>`}).join("");
+})();
+
+// Progress table
+(function(){
+  let h=`<thead><tr><th>Week</th>${PILLARS.map(p=>`<th>${p.k} · ${p.name}</th>`).join("")}<th>Score</th></tr></thead><tbody>`;
+  WEEKS.slice().reverse().forEach((w,ri)=>{const i=WEEKS.length-ri;
+    h+=`<tr><td>Week ${i}</td>${w.map(v=>`<td class="c" style="background:rgba(230,255,0,${((v-4)/6*0.45).toFixed(2)})">${v}</td>`).join("")}<td><b>${score(w)}</b></td></tr>`});
+  document.getElementById("ptable").innerHTML=h+"</tbody>";
+})();
+
+// Log
+document.getElementById("log").innerHTML=LOG.map(e=>`<article class="entry"><div class="top"><h3>Week ${e.w}</h3><span class="kicker y">${e.date}</span></div>
+  <dl><dt>Win</dt><dd>${e.win}</dd><dt>We talked about</dt><dd>${e.talk}</dd><dt>Next step</dt><dd>${e.next}</dd></dl></article>`).join("");
+
+// Goal milestones (agreed in the first one-on-one; ticked off after each session)
+(function(){
+  const M=[["3 km without stopping",1],["5 km",1],["7 km",1],["8 km",0],["10 km",0]];
+  const pct=Math.round(M.filter(m=>m[1]).length/M.length*100);
+  document.getElementById("goalPct").textContent=pct;
+  document.getElementById("goalBar").style.width=pct+"%";
+  document.getElementById("miles").innerHTML=M.map(m=>`<li class="${m[1]?'done':''}">${m[0]}</li>`).join("");
+})();
+
+// Line chart helper
+function lineChart(el,series,max,ticks,label){
+  const W=720,H=260,p={l:36,r:96,t:16,b:32},iw=W-p.l-p.r,ih=H-p.t-p.b,n=WEEKS.length;
+  const x=i=>p.l+(n===1?0:i*iw/(n-1)), y=v=>p.t+ih-(v/max)*ih;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${label}">`;
+  ticks.forEach(v=>s+=`<line x1="${p.l}" x2="${W-p.r}" y1="${y(v)}" y2="${y(v)}" stroke="#2A2A2A"/><text x="${p.l-8}" y="${y(v)+4}" text-anchor="end">${v}</text>`);
+  for(let i=0;i<n;i++) s+=`<text x="${x(i)}" y="${H-10}" text-anchor="middle">Wk ${i+1}</text>`;
+  // nudge end labels apart
+  const ends=series.map((sr,k)=>({k,y:y(sr.v.at(-1))})).sort((a,b)=>a.y-b.y);
+  for(let i=1;i<ends.length;i++) if(ends[i].y-ends[i-1].y<14) ends[i].y=ends[i-1].y+14;
+  series.forEach((sr,k)=>{
+    const d=sr.v.map((v,i)=>`${i?'L':'M'}${x(i)},${y(v)}`).join(" ");
+    if(sr.area) s+=`<path d="${d} L${x(n-1)},${y(0)} L${x(0)},${y(0)} Z" fill="${sr.c}" opacity=".12"/>`;
+    s+=`<path d="${d}" fill="none" stroke="${sr.c}" stroke-width="${sr.w||2.5}" stroke-linejoin="round" stroke-linecap="round"${sr.dash?` stroke-dasharray="${sr.dash}"`:''}/>`;
+    s+=`<circle cx="${x(n-1)}" cy="${y(sr.v.at(-1))}" r="4.5" fill="${sr.c}"/>`;
+    const ly=ends.find(e=>e.k===k).y;
+    s+=`<text x="${x(n-1)+10}" y="${ly+4}" style="fill:${sr.c};font-weight:600">${sr.name} ${sr.v.at(-1)}</text>`;
+  });
+  el.innerHTML=s+"</svg>";
+}
+const PCOL=["#FF5F1F","#E6FF00","#FFFFFF","#FF9A5C","#9A9A9A"];
+const PDASH=["","","6 4","","2 4"];
+lineChart(document.getElementById("pchart"),
+  PILLARS.map((p,i)=>({name:p.k,c:PCOL[i],dash:PDASH[i],v:WEEKS.map(w=>w[i])})),10,[0,2,4,6,8,10],"CLEAR pillar scores across eight weeks");
+document.getElementById("pkeys").innerHTML=PILLARS.map((p,i)=>`<span><i style="background:${PCOL[i]}"></i>${p.k} · ${p.name}</span>`).join("");
+lineChart(document.getElementById("schart"),[{name:"Score",c:"#FF5F1F",area:true,w:3,v:scores}],100,[0,25,50,75,100],`Overall score from ${scores[0]} to ${now}`);
+
+// Hash routing
+const VIEWS=["overview","clear","progress","log"];
+function route(){const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):"overview";
+  document.querySelectorAll("[data-view]").forEach(s=>s.hidden=s.dataset.view!==v);
+  document.querySelectorAll("nav a").forEach(a=>a.toggleAttribute("aria-current",a.getAttribute("href")==="#"+v)&&a.setAttribute("aria-current","page"));
+  document.querySelectorAll("nav a").forEach(a=>{if(a.getAttribute("href")==="#"+v)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
+}
+addEventListener("hashchange",route); route();
+</script>
+</body>
+</html>
